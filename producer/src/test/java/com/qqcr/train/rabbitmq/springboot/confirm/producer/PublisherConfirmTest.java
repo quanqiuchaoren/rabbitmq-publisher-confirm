@@ -2,7 +2,6 @@ package com.qqcr.train.rabbitmq.springboot.confirm.producer;
 
 import com.qqcr.train.rabbitmq.springboot.confirm.producer.config.RabbitMQConfig;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
