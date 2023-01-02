@@ -5,6 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -34,6 +35,7 @@ public class PublisherConfirmTest {
         TimeUnit.SECONDS.sleep(2);
     }
 
+    @DisplayName("有exchange收到了消息，则ack为true")
     @Test
     public void should_return_true_when_exchange_received_message() throws InterruptedException {
         /* 给template设置confirm回调函数 */
@@ -57,7 +59,7 @@ public class PublisherConfirmTest {
         });
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, "key_confirm", "boot mq hello~~~");
     }
-
+    @DisplayName("没有exchange收到消息，则ack为false")
     @Test
     public void should_return_false_when_exchange_not_existed() throws InterruptedException {
         /* 给template设置confirm回调函数 */
