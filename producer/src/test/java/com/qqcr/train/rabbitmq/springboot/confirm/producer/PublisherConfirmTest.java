@@ -34,9 +34,9 @@ public class PublisherConfirmTest {
         TimeUnit.SECONDS.sleep(2);
     }
 
-    @DisplayName("有exchange收到了消息，则ack为true")
+    @DisplayName("有exchange收到了消息，消息没有被转发到任何queue，则ack为true")
     @Test
-    public void should_return_true_when_exchange_received_message() throws InterruptedException {
+    public void should_return_true_when_exchange_received_message_but_no_queue_received() throws InterruptedException {
         /* 给template设置confirm回调函数 */
         rabbitTemplate.setConfirmCallback(new RabbitTemplate.ConfirmCallback() {
             /**
@@ -48,6 +48,22 @@ public class PublisherConfirmTest {
              * @param cause An optional cause, for nack, when available, otherwise null.
              *              如果ack为false，则这里一般就会有值，表示为什么为false，为什么交换机没有收到消息。
              */
+            @Override
+            public void confirm(@NonNull CorrelationData correlationData, boolean ack, @Nullable String cause) {
+                System.out.println("correlationData: [" + correlationData + "]"); // null
+                System.out.println("ack: [" + ack + "]"); // true
+                System.out.println("cause: [" + cause + "]"); // null
+                Assertions.assertTrue(ack);
+            }
+        });
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, "key_confirm_no_queue_received", "boot mq hello~~~");
+    }
+
+    @DisplayName("有exchange收到了消息，消息被转发到了queue，则ack为true")
+    @Test
+    public void should_return_true_when_exchange_received_message_and_queue_received() throws InterruptedException {
+        /* 给template设置confirm回调函数 */
+        rabbitTemplate.setConfirmCallback(new RabbitTemplate.ConfirmCallback() {
             @Override
             public void confirm(@NonNull CorrelationData correlationData, boolean ack, @Nullable String cause) {
                 System.out.println("correlationData: [" + correlationData + "]"); // null
