@@ -50,14 +50,31 @@ public class PublisherConfirmTest {
              */
             @Override
             public void confirm(@NonNull CorrelationData correlationData, boolean ack, @Nullable String cause) {
-                System.out.println("correlationData: [" + correlationData + "]");
-                System.out.println("ack: [" + ack + "]");
-                System.out.println("cause: [" + cause + "]");
+                System.out.println("correlationData: [" + correlationData + "]"); // null
+                System.out.println("ack: [" + ack + "]"); // true
+                System.out.println("cause: [" + cause + "]"); // null
                 Assertions.assertTrue(ack);
             }
         });
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, "key_confirm", "boot mq hello~~~");
     }
+
+    @DisplayName("有exchange收到了消息，但是exchange没有绑定任何队列，则ack依然为true")
+    @Test
+    public void should_return_true_when_exchange_received_message_and_not_reach_queue() {
+        /* 给template设置confirm回调函数 */
+        rabbitTemplate.setConfirmCallback(new RabbitTemplate.ConfirmCallback() {
+            @Override
+            public void confirm(@NonNull CorrelationData correlationData, boolean ack, @Nullable String cause) {
+                System.out.println("correlationData: [" + correlationData + "]"); // null
+                System.out.println("ack: [" + ack + "]"); // true
+                System.out.println("cause: [" + cause + "]"); // null
+                Assertions.assertTrue(ack);
+            }
+        });
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_WITHOUT_QUEUE, "key_confirm", "boot mq hello~~~");
+    }
+
     @DisplayName("没有exchange收到消息，则ack为false")
     @Test
     public void should_return_false_when_exchange_not_existed() throws InterruptedException {
